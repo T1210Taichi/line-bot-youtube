@@ -20,9 +20,9 @@ YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
-#@app.route("/")
-#def hello_world():
-#    return "hello world!"
+@app.route("/")
+def hello_world():
+    return "hello world!"
 
 #1
 #Webhookからのリクエストをチェックする
@@ -54,22 +54,22 @@ def callback():
 #reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです
 #第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
 
-#@handler.add(MessageEvent, message=TextMessage)
-#def handle_message(event):
-#    line_bot_api.reply_message(
-#        event.reply_token,
-#        TextSendMessage(text=event.message.text))
-
-
 @handler.add(MessageEvent, message=TextMessage)
-def message_text(event):
-    if event.reply_token == "00000000000000000000000000000000": # 追記
-        return #追記
-
+def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text)
-    )
+        TextSendMessage(text=event.message.text))
+
+
+#@handler.add(MessageEvent, message=TextMessage)
+#def message_text(event):
+#    if event.reply_token == "00000000000000000000000000000000": # 追記
+#        return #追記
+#
+#    line_bot_api.reply_message(
+#        event.reply_token,
+#        TextSendMessage(text=event.message.text)
+#    )
 
 if __name__ == "__main__":
 #    app.run()
