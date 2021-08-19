@@ -37,7 +37,7 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        abort(200)
+        abort(400)
 
     return 'OK'
 
@@ -50,5 +50,5 @@ def handle_message(event):
 if __name__ == "__main__":
 #    app.run()
     port = int(os.getenv("PORT"))
-    #app.run(host="0.0.0.0", port=port)
-    app.run()
+    app.run(host="0.0.0.0", port=port)
+    #app.run()
