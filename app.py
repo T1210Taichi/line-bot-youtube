@@ -1,15 +1,10 @@
-import os
-import sys
-import requests
-from flask import Flask, request, abort
-from io import BytesIO
+from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def hello_world():
-    return "hello world!"
+    return 'Hello World!'
 
-
-if __name__ == "__main__":
-    app.run()
+if __name__ == '__main__':
+    app.run(debug=False)
