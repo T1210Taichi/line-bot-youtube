@@ -1,4 +1,4 @@
-from get_youtube_channel_data import get_youtube_channel_data_bp
+from get_youtube_channel_data import get_youtube_channel_data_bp as get_ycd
 
 from flask import Flask, request, abort
 import os
@@ -19,9 +19,14 @@ from linebot.models import (
 
 app = Flask(__name__)
 
+#get_youtube_channel_data.pyを使うため
+#app.register_blueprint(get_youtube_channel_data)
+
 #環境変数取得
-YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+#YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+#YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
+YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
@@ -67,20 +72,21 @@ def callback():
 #        event.reply_token,
 #        TextSendMessage(text=event.message.text))
 
-#画像を返す
+#画像を返す(イラストや)
 #@handler.add(MessageEvent, message=TextMessage)
 #def handle_message(event):
-#    img_irasutoya = ImageSendMessage(
-#        original_content_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png",
-#        preview_image_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png",
-#    )
-#    
+#    img_irasutoya = ImageSendMessage(original_content_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png",preview_image_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png")
 #    line_bot_api.reply_message(event.reply_token,img_irasutoya)
 
+#画像を返す(youtubeチャンネルの情報)
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    img_irasutoya = ImageSendMessage(original_content_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png",preview_image_url="https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png")
-    line_bot_api.reply_message(event.reply_token,img_irasutoya)
+    #チャンネル情報のpngのパス
+    path_youtube_channel_info = get_ycd.get_channel_info_png(message.text)
+    #チャンネル情報のpng
+    img_youtube_channel_info = ImageSendMessage(original_content_url=path_youtube_channel_info,preview_image_url=path_youtube_channel_info)
+    #pngを送信
+    line_bot_api.reply_message(event.reply_token,img_youtube_channel_info)
 
 if __name__ == "__main__":
 #    app.run()

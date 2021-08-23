@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from flask import Blueprint
 
 #APIで使用する
-get_youtube_channel_data_bp = Blueprint("get_youtube_channel_data",__name__,url_prefix="/get_youtube_channel_data")
+get_youtube_channel_data_bp = Blueprint("get_youtube_channel_data",__name__)
 
 #自分のAPIキーを入力
 YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
@@ -89,7 +89,6 @@ def get_youtube_channel_infomation(df_channel_title_id):
 
 
 #呼び出し用
-@get_youtube_channel_data_bp.route("/")
 def get_channel_info_png(keyword):
     #キーワードを指定
     #チャンネル名とIDのdfを受け取る
@@ -127,15 +126,10 @@ def get_channel_info_png(keyword):
     #余白をなくす
     plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
     #pngで保存
-    plt.savefig("./output/"+ keyword + "_youtube_channel_info.png",dpi=200)
-    #保存のための保険
-    #plt.show()
-    img = cv2.imread("./output/" + keyword + "_youtube_channel_info.png")
-    #デプロイするときには、画像ファイルを削除するようにする
-    #os.remove(+ keyword + "_youtube_channel_info.png")
+    plt.savefig("./static/"+ keyword + "_youtube_channel_info.png",dpi=200)
+    #画像のファイルパス
+    img = "./static/"+ keyword + "_youtube_channel_info.png"
     return img
-    #完了
-    #print("All Success")
 
 
 #メインループ
