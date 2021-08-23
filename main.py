@@ -1,6 +1,8 @@
 #youtubeチャンネル情報
 #from get_youtube_channel_data import get_ycd_bp
 
+from googleapiclient.discovery import build
+
 from flask import Flask, request, abort
 import os
 import gunicorn
@@ -26,17 +28,17 @@ app = Flask(__name__)
 #app.register_blueprint(get_ycd_bp)
 
 #環境変数取得
-YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
-#YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
-#YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
+#YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+#YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
+YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 #自分のAPIキーを入力
-#YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
-YOUTuBe_API_KEY = os.environ["YOUTUBE_API_KEY"]
+YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
+#YOUTuBe_API_KEY = os.environ["YOUTUBE_API_KEY"]
 #YouDataAPI
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
