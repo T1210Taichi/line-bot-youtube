@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from flask import Blueprint
 
 #APIで使用する
-get_youtube_channel_data_bp = Blueprint("get_youtube_channel_data",__name__)
+#get_youtube_channel_data_bp = Blueprint("get_youtube_channel_data",__name__)
 
 #自分のAPIキーを入力
 YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
@@ -86,7 +86,6 @@ def get_youtube_channel_infomation(df_channel_title_id):
     df_channel_info = df_channel_info[~df_channel_info.duplicated()]
 
     return df_channel_info
-
 
 #呼び出し用
 def get_channel_info_png(keyword):

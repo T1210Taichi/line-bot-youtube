@@ -20,7 +20,7 @@ from linebot.models import (
 app = Flask(__name__)
 
 #get_youtube_channel_data.pyを使うため
-#app.register_blueprint(get_youtube_channel_data)
+#app.register_blueprint(get_youtube_channel_data_bp)
 
 #環境変数取得
 #YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
