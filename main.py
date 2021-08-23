@@ -1,4 +1,4 @@
-#import get_youtube_channel_dat
+from get_youtube_channel_data import get_youtube_channel_data_bp
 
 from flask import Flask, request, abort
 import os
