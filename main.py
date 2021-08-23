@@ -216,9 +216,9 @@ def get_channel_info_png(keyword):
     #余白をなくす
     plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
     #pngで保存
-    plt.savefig("./static/"+ keyword + "_youtube_channel_info.png",dpi=200)
+    plt.savefig("/static/"+ keyword + "_youtube_channel_info.png",dpi=200)
     #画像のファイルパス
-    img = "./static/"+ keyword + "_youtube_channel_info.png"
+    img = "/static/"+ keyword + "_youtube_channel_info.png"
     return img
 
 if __name__ == "__main__":
