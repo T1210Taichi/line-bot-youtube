@@ -1,14 +1,37 @@
 from googleapiclient.discovery import build
 #from apiclient.discovery import build
 
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.exceptions import (
+    InvalidSignatureError
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
+from linebot.models import (
+    ImageMessage, ImageSendMessage
+)
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from flask import Blueprint
 
+#環境変数取得
+#YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+#YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
+YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
+
+line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+
+
 #APIで使用する
-#get_youtube_channel_data_bp = Blueprint("get_youtube_channel_data",__name__)
+get_ycd_bp = Blueprint("get_ycd_bp",__name__)
 
 #自分のAPIキーを入力
 YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
@@ -47,7 +70,6 @@ def get_youtube_channel_id(keyword):
     df_channel_title_id = df_channel_title_id[~df_channel_title_id.duplicated()]
 
     return df_channel_title_id
-
 
 #youtubeチャンネルの名前とIDのdfを受け取り
 #そのチャンネルの「名前、公開日、登録者数、合計視聴時間、合計投稿数、説明」のdfを返す
@@ -179,3 +201,35 @@ if __name__ == "__main__":
 
     #完了
     print("All Success")
+
+#line
+#1
+#Webhookからのリクエストをチェックする
+@get_ycd_bp.route("/callback", methods=['POST'])
+def callback():
+    # リクエストヘッダーから署名検証のための値を取得する
+    signature = request.headers['X-Line-Signature']
+
+    #リクエストボディを取得する
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    #署名を検証し、問題なければhandleに定義されている関数を呼び出す
+    try:
+        handler.handle(body, signature)
+    #署名検証を失敗した場合、例外を出す
+    except InvalidSignatureError:
+        abort(400)
+    #handleの処理を終えればOK
+    return 'OK'
+
+#画像を返す(youtubeチャンネルの情報)
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    #チャンネル情報のpngのパス
+    path_youtube_channel_info = get_channel_info_png(message.text)
+    #チャンネル情報のpng
+    img_youtube_channel_info = ImageSendMessage(original_content_url=path_youtube_channel_info,preview_image_url=path_youtube_channel_info)
+    #pngを送信
+    line_bot_api.reply_message(event.reply_token,img_youtube_channel_info)

@@ -1,4 +1,5 @@
-from get_youtube_channel_data import get_youtube_channel_data_bp as get_ycd
+#youtubeチャンネル情報
+from get_youtube_channel_data import get_ycd_bp
 
 from flask import Flask, request, abort
 import os
@@ -20,7 +21,7 @@ from linebot.models import (
 app = Flask(__name__)
 
 #get_youtube_channel_data.pyを使うため
-#app.register_blueprint(get_youtube_channel_data_bp)
+app.register_blueprint(get_ycd_bp)
 
 #環境変数取得
 #YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
@@ -37,24 +38,24 @@ def hello_world():
 
 #1
 #Webhookからのリクエストをチェックする
-@app.route("/callback", methods=['POST'])
-def callback():
-    # リクエストヘッダーから署名検証のための値を取得する
-    signature = request.headers['X-Line-Signature']
+#@app.route("/callback", methods=['POST'])
+#def callback():
+#    # リクエストヘッダーから署名検証のための値を取得する
+#    signature = request.headers['X-Line-Signature']
 
     #リクエストボディを取得する
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+#    body = request.get_data(as_text=True)
+#    app.logger.info("Request body: " + body)
 
     # handle webhook body
     #署名を検証し、問題なければhandleに定義されている関数を呼び出す
-    try:
-        handler.handle(body, signature)
+#    try:
+#        handler.handle(body, signature)
     #署名検証を失敗した場合、例外を出す
-    except InvalidSignatureError:
-        abort(400)
+#    except InvalidSignatureError:
+#        abort(400)
     #handleの処理を終えればOK
-    return 'OK'
+#    return 'OK'
 
 
 #2
