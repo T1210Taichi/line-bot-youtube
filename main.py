@@ -7,6 +7,9 @@ from flask import Flask, request, abort
 import os
 import gunicorn
 
+import pandas as pd
+import matplotlib.pyplot as plt
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
