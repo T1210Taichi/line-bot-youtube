@@ -29,7 +29,6 @@ YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
-
 #APIで使用する
 get_ycd_bp = Blueprint("get_ycd_bp",__name__)
 
@@ -233,3 +232,8 @@ def handle_message(event):
     img_youtube_channel_info = ImageSendMessage(original_content_url=path_youtube_channel_info,preview_image_url=path_youtube_channel_info)
     #pngを送信
     line_bot_api.reply_message(event.reply_token,img_youtube_channel_info)
+
+#ルーティングチェック
+@get_ycd_bp.route("/test2")
+def test2():
+    return "test2 OK!"

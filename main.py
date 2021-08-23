@@ -36,6 +36,10 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 def hello_world():
     return "hello world!"
 
+@app.route("/test1")
+def test1():
+    return "test1 OK!"
+
 #1
 #Webhookからのリクエストをチェックする
 #@app.route("/callback", methods=['POST'])
