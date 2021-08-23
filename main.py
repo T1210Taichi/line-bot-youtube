@@ -175,7 +175,46 @@ def get_youtube_channel_infomation(df_channel_title_id):
 
 #呼び出し用
 def get_channel_info_png(keyword):
+    #キーワードを指定
+    #チャンネル名とIDのdfを受け取る
+    df_channel_title_id = get_youtube_channel_id(keyword)
+    #print("get video Success")
+    #チャンネルの情報を受け取る
+    df_channel_info = get_youtube_channel_infomation(df_channel_title_id)
+    #print("get channel info Success")
 
+    #ラベルを日本語表記
+    df_channel_info = df_channel_info.rename(columns={"title":"チャンネル名",
+                                                 "publishedAt":"公開日",
+                                                 "subscriberCount":"チャンネル登録者数",
+                                                 "viewCount":"総再生回数",
+                                                 "videoCount":"総動画数",})
+
+    # フォントの種類とサイズを設定する。
+    plt.rcParams['font.family'] = 'MS Gothic'
+    plt.rcParams["font.size"] = 30
+
+    #画像(png)で出力する
+    #dpiを大きくすると表が大きくなる
+    fig,ax = plt.subplots(figsize=((len(df_channel_info.columns)+1)*1.2, (len(df_channel_info)+1)*0.4),dpi=200)
+    #軸を表示しない
+    ax.axis("off")
+    ax.axis("tight")
+    #表の設定
+    ax.table(cellText=df_channel_info.values,
+            colLabels = df_channel_info.columns
+            ,rowLabels = df_channel_info.index
+            ,colColours =['#96ABA0'] * 5
+            ,rowColours =['#96ABA0'] * 5
+            ,loc="center"
+            )
+    #余白をなくす
+    plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
+    #pngで保存
+    plt.savefig("./static/"+ keyword + "_youtube_channel_info.png",dpi=200)
+    #画像のファイルパス
+    img = "./static/"+ keyword + "_youtube_channel_info.png"
+    return img
 
 if __name__ == "__main__":
 #    app.run()
