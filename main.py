@@ -97,7 +97,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     #チャンネル情報のpngのパス
-    path_youtube_channel_info = get_channel_info_png(message.text)
+    path_youtube_channel_info = get_channel_info_png(event.message.text)
     #チャンネル情報のpng
     img_youtube_channel_info = ImageSendMessage(original_content_url=path_youtube_channel_info,preview_image_url=path_youtube_channel_info)
     #pngを送信
