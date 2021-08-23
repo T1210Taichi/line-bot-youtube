@@ -237,3 +237,4 @@ def handle_message(event):
 @get_ycd_bp.route("/test2")
 def test2():
     return "test2 OK!"
+
