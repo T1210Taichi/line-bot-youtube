@@ -4,7 +4,6 @@ from googleapiclient.discovery import build
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import cv2
 
 #自分のAPIキーを入力
 YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
