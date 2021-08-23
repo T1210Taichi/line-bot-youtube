@@ -1,5 +1,5 @@
 #youtubeチャンネル情報
-from get_youtube_channel_data import get_ycd_bp
+#from get_youtube_channel_data import get_ycd_bp
 
 from flask import Flask, request, abort
 import os
@@ -20,17 +20,25 @@ from linebot.models import (
 
 app = Flask(__name__)
 
+
+
 #get_youtube_channel_data.pyを使うため
-app.register_blueprint(get_ycd_bp)
+#app.register_blueprint(get_ycd_bp)
 
 #環境変数取得
-#YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-#YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
-YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
-YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
+YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+#YOUR_CHANNEL_ACCESS_TOKEN = "9yCdvg0MDclAYuc1tSEjcN2qZfjRAeSb4LqU/meK38NA9Aj6E4f3EC7DZaQ1xtYjWPgmKVsDp0FbvCyA9MpNR+YdQIJxPhuTUi4gajvZ/pZupTKRUwnOh767NaK6KZTza/kmAtBNQZsrIwX40zMbYwdB04t89/1O/w1cDnyilFU="
+#YOUR_CHANNEL_SECRET = "2e576afd75097ad7804ee18ab9f3e776"
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+
+#自分のAPIキーを入力
+#YOUTUBE_API_KEY = 'AIzaSyD78RLvTFeJPw3qDwYpaJWlNX99tQtUvn4'
+YOUTuBe_API_KEY = os.environ["YOUTUBE_API_KEY"]
+#YouDataAPI
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 @app.route("/")
 def hello_world():
@@ -42,24 +50,24 @@ def test1():
 
 #1
 #Webhookからのリクエストをチェックする
-#@app.route("/callback", methods=['POST'])
-#def callback():
-#    # リクエストヘッダーから署名検証のための値を取得する
-#    signature = request.headers['X-Line-Signature']
+@app.route("/callback", methods=['POST'])
+def callback():
+    # リクエストヘッダーから署名検証のための値を取得する
+    signature = request.headers['X-Line-Signature']
 
     #リクエストボディを取得する
-#    body = request.get_data(as_text=True)
-#    app.logger.info("Request body: " + body)
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
 
     # handle webhook body
     #署名を検証し、問題なければhandleに定義されている関数を呼び出す
-#    try:
-#        handler.handle(body, signature)
+    try:
+        handler.handle(body, signature)
     #署名検証を失敗した場合、例外を出す
-#    except InvalidSignatureError:
-#        abort(400)
+    except InvalidSignatureError:
+        abort(400)
     #handleの処理を終えればOK
-#    return 'OK'
+    return 'OK'
 
 
 #2
@@ -87,11 +95,87 @@ def test1():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     #チャンネル情報のpngのパス
-    path_youtube_channel_info = get_ycd.get_channel_info_png(message.text)
+    path_youtube_channel_info = get_channel_info_png(message.text)
     #チャンネル情報のpng
     img_youtube_channel_info = ImageSendMessage(original_content_url=path_youtube_channel_info,preview_image_url=path_youtube_channel_info)
     #pngを送信
     line_bot_api.reply_message(event.reply_token,img_youtube_channel_info)
+
+
+#キーワードを受け取り、そのキーワードについて動画を調べる
+#その動画のyoutubeチャンネルの名前とIDのdfを返す
+#get_youtube_channel_id(キーワード)
+def get_youtube_channel_id(keyword):
+    #キーワードについて動画を調べる
+    search_response = youtube.search().list(
+        part='snippet',
+        #検索したい文字列を指定
+        q=keyword,
+        #視聴回数が多い順に取得
+        #order='date',
+        #type='video',
+        #maxResults=5,
+    ).execute()
+
+    #itemsだけ抜きだす
+    video_data = search_response["items"]
+
+    #全体
+    df = pd.DataFrame(video_data)
+    #動画ごとの一意のvideoIdを取得
+    df_videoId = pd.DataFrame(list(df['id']))['videoId']
+    #動画ごとの投稿チャンネル名channelTitleを取得
+    df_channelTitle = pd.DataFrame(list(df['snippet']))['channelTitle']
+    #動画を投稿しているchannelIdを取得
+    df_channelId = pd.DataFrame(list(df["snippet"]))["channelId"]
+    #チャンネル名とチャンネルIDを結合
+    df_channel_title_id = pd.concat([df_channelTitle,df_channelId],axis=1)
+    #重複を削除
+    df_channel_title_id = df_channel_title_id[~df_channel_title_id.duplicated()]
+
+    return df_channel_title_id
+
+#youtubeチャンネルの名前とIDのdfを受け取り
+#そのチャンネルの「名前、公開日、登録者数、合計視聴時間、合計投稿数、説明」のdfを返す
+def get_youtube_channel_infomation(df_channel_title_id):
+    channel_response = []
+    for chan in df_channel_title_id["channelId"]:
+        channel_response.append(youtube.channels().list(
+                                    part='statistics,snippet',
+                                    id = chan,
+                                    ).execute()    
+        )
+    #itemsの情報をまとめる
+    channel_items = []
+    for chan in channel_response:
+        channel_items.append(chan["items"])
+
+    #itemの情報をdfにし、それぞれ配列に格納
+    chan_info_df = []
+    for chan in channel_items:
+        chan_info_df.append(pd.DataFrame(chan))
+
+    #チャンネルの情報を一行にまとめる
+    df_chan_info = chan_info_df[0]
+    df_chan_info = df_chan_info.append(chan_info_df[:])
+
+    #チャンネル名,チャンネル開設時間,説明
+    df_channel_title_publishedAt = pd.DataFrame(list(df_chan_info['snippet']))[['title','publishedAt']]
+    #df_channel_description = pd.DataFrame(list(df_chan_info['snippet']))['description']
+
+    #チャンネル登録数、総再生回数,動画数
+    df_channel_statistics = pd.DataFrame(list(df_chan_info["statistics"]))[['subscriberCount','viewCount','videoCount']]
+
+    #チャンネルの情報を結合
+    df_channel_info =  pd.concat([df_channel_title_publishedAt,df_channel_statistics],axis=1)
+    #重複を削除
+    df_channel_info = df_channel_info[~df_channel_info.duplicated()]
+
+    return df_channel_info
+
+#呼び出し用
+def get_channel_info_png(keyword):
+
 
 if __name__ == "__main__":
 #    app.run()
