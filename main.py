@@ -1,3 +1,5 @@
+import get_youtube_channel_data
+
 from flask import Flask, request, abort
 import os
 import gunicorn
@@ -55,22 +57,21 @@ def callback():
 #reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです
 #第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
 
+#テキスト(オウム返し)
+#@handler.add(MessageEvent, message=TextMessage)
+#def handle_message(event):
+#    line_bot_api.reply_message(
+#        event.reply_token,
+#        TextSendMessage(text=event.message.text))
+
+#画像を返す
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        ImageSendMessage(original_content_url=’https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png’,
+        preview_image_url=’https://1.bp.blogspot.com/-eaDZ7sDP9uY/Xhwqlve5SUI/AAAAAAABXBo/EcI2C2vim7w2WV6EYy3ap0QLirX7RPohgCNcBGAsYHQ/s400/pose_syanikamaeru_man.png’)))
 
-
-#@handler.add(MessageEvent, message=TextMessage)
-#def message_text(event):
-#    if event.reply_token == "00000000000000000000000000000000": # 追記
-#        return #追記
-#
-#    line_bot_api.reply_message(
-#        event.reply_token,
-#        TextSendMessage(text=event.message.text)
-#    )
 
 if __name__ == "__main__":
 #    app.run()
